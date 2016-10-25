@@ -60,6 +60,14 @@ class Transport(object):
                 log_message = log_message.decode('utf-8')
             self.logger.debug("HTTP Post to %s:\n%s", address, log_message)
 
+        # Dirty temporary hack until full fix of :
+        # https://github.com/mvantellingen/python-zeep/issues/229
+        # Until then, this depends on commit #dab5539 from python-zeep Repo
+        message = message.decode("utf-8")\
+            .replace('xsi:type="xsd:',
+                     'xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="xsd:')\
+            .encode("utf-8")
+
         response = self.session.post(address, data=message, headers=headers)
 
         if self.logger.isEnabledFor(logging.DEBUG):
